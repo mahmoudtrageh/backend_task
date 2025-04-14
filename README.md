@@ -4,9 +4,13 @@ A Laravel-based leave management system for handling employee leave requests acr
 ## Features
 
 - Multi-department employee management
+
 - Role-based permissions (Employee, Manager, HR)
+
 - Complete leave request workflow (Submit → Manager Approval → HR Approval)
+
 - Email notifications for request status changes
+
 - RESTful API with proper validation and authorization
 
 # Clone the repository
