@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\API;
 
 use App\Http\Controllers\Controller;
+use App\Http\Resources\UserResource;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -73,6 +74,14 @@ class AuthController extends Controller
 
     public function user(Request $request)
     {
-        return $this->success($request->user());
+        $user = $request->user()->load([
+            'departments', 
+            'positions', 
+            'userDepartmentPositions.department', 
+            'userDepartmentPositions.position',
+            'managedDepartments'
+        ]);
+
+        return $this->success(new UserResource($user));
     }
 }

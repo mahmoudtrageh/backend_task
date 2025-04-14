@@ -2,12 +2,13 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
 use Illuminate\Foundation\Auth\User as Authenticatable;
+use Filament\Models\Contracts\FilamentUser;
+use Filament\Panel;
 
-class Admin extends Authenticatable
+class Admin extends Authenticatable implements FilamentUser
 {
     use HasApiTokens, Notifiable;
 
@@ -26,4 +27,9 @@ class Admin extends Authenticatable
         'email_verified_at' => 'datetime',
         'password' => 'hashed',
     ];
+
+    public function canAccessPanel(Panel $panel): bool
+    {
+        return true;
+    }
 }
