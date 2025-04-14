@@ -1,0 +1,343 @@
+{
+	"info": {
+		"_postman_id": "d911a794-cbab-4d3c-bce0-b313c477dfd9",
+		"name": "backend task",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "5486234",
+		"_collection_link": "https://restless-crater-663961.postman.co/workspace/My-Workspace~47c277b8-483e-4d1e-8008-52f90e3b18a1/collection/5486234-d911a794-cbab-4d3c-bce0-b313c477dfd9?action=share&source=collection_link&creator=5486234"
+	},
+	"item": [
+		{
+			"name": "auth",
+			"item": [
+				{
+					"name": "register",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "name",
+									"value": "mahmoud1",
+									"type": "text"
+								},
+								{
+									"key": "email",
+									"value": "geo.mahmoudtaha1@gmail.com",
+									"type": "text"
+								},
+								{
+									"key": "password",
+									"value": "12345678",
+									"type": "text"
+								},
+								{
+									"key": "password_confirmation",
+									"value": "12345678",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{local_url}}api/register",
+							"host": [
+								"{{local_url}}api"
+							],
+							"path": [
+								"register"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "login",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "email",
+									"value": "wonic89166@naobk.com",
+									"type": "text"
+								},
+								{
+									"key": "password",
+									"value": "password",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{local_url}}api/login",
+							"host": [
+								"{{local_url}}api"
+							],
+							"path": [
+								"login"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "user",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{local_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "email",
+									"value": "geo.mahmoudtaha@gmail.com",
+									"type": "text"
+								},
+								{
+									"key": "password",
+									"value": "12345678",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{local_url}}api/user",
+							"host": [
+								"{{local_url}}api"
+							],
+							"path": [
+								"user"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "leave requests",
+			"item": [
+				{
+					"name": "store leave request",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{local_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "leave_type_id",
+									"value": "1",
+									"type": "text"
+								},
+								{
+									"key": "department_id",
+									"value": "2",
+									"type": "text"
+								},
+								{
+									"key": "start_date",
+									"value": "14-04-2025",
+									"type": "text"
+								},
+								{
+									"key": "end_date",
+									"value": "15-04-2025",
+									"type": "text"
+								},
+								{
+									"key": "reason",
+									"value": "text case",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{local_url}}api/leave-request",
+							"host": [
+								"{{local_url}}api"
+							],
+							"path": [
+								"leave-request"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "update leave request",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{local_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PATCH",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "status",
+									"value": "rejected",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{local_url}}api/leave-requests/17/status",
+							"host": [
+								"{{local_url}}api"
+							],
+							"path": [
+								"leave-requests",
+								"17",
+								"status"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "index",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{local_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{local_url}}api/leave-requests",
+							"host": [
+								"{{local_url}}api"
+							],
+							"path": [
+								"leave-requests"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "employees",
+			"item": [
+				{
+					"name": "employees",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{local_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{local_url}}api/employees?department_id=2",
+							"host": [
+								"{{local_url}}api"
+							],
+							"path": [
+								"employees"
+							],
+							"query": [
+								{
+									"key": "department_id",
+									"value": "2"
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	]
+}
