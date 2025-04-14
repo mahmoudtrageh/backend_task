@@ -19,7 +19,7 @@ class DatabaseSeeder extends Seeder
             DepartmentSeeder::class,
             PositionSeeder::class,
             LeaveTypeSeeder::class,
-            UserDepartnentPositioneeder::class,
+            UserDepartmentPositionSeeder::class,
             LeaveRequestSeeder::class,
         ]);
     }
