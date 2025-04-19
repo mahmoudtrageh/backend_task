@@ -14,13 +14,10 @@ class PositionSeeder extends Seeder
     public function run(): void
     {
         $positions = [
-            ['title' => 'Manager', 'created_at' => now(), 'updated_at' => now()],
             ['title' => 'HR Manager', 'created_at' => now(), 'updated_at' => now()],
-            ['title' => 'Developer', 'created_at' => now(), 'updated_at' => now()],
-            ['title' => 'Designer', 'created_at' => now(), 'updated_at' => now()],
-            ['title' => 'Sales Representative', 'created_at' => now(), 'updated_at' => now()],
-            ['title' => 'Marketing Specialist', 'created_at' => now(), 'updated_at' => now()],
-            ['title' => 'Accountant', 'created_at' => now(), 'updated_at' => now()],
+            ['title' => 'Sales Manager', 'created_at' => now(), 'updated_at' => now()],
+            ['title' => 'Finance Manager', 'created_at' => now(), 'updated_at' => now()],
+            ['title' => 'Employee', 'created_at' => now(), 'updated_at' => now()],
         ];
 
         DB::table('positions')->insert($positions);

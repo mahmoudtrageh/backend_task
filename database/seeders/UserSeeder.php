@@ -27,8 +27,19 @@ class UserSeeder extends Seeder
 
         // Create Department Managers
         DB::table('users')->insert([
-            'name' => 'IT Manager',
-            'email' => 'itmanager@example.com',
+            'name' => 'Sales Direct Manager',
+            'email' => 'sales_direct_manager@example.com',
+            'email_verified_at' => now(),
+            'password' => Hash::make('password'),
+            'remember_token' => Str::random(10),
+            'created_at' => now(),
+            'updated_at' => now(),
+        ]);
+
+         // Create Department Managers
+         DB::table('users')->insert([
+            'name' => 'Finance Direct Manager',
+            'email' => 'finance_direct_manager@example.com',
             'email_verified_at' => now(),
             'password' => Hash::make('password'),
             'remember_token' => Str::random(10),
@@ -37,8 +48,8 @@ class UserSeeder extends Seeder
         ]);
 
         DB::table('users')->insert([
-            'name' => 'Sales Manager',
-            'email' => 'salesmanager@example.com',
+            'name' => 'Sales Employee',
+            'email' => 'sales_employee@example.com',
             'email_verified_at' => now(),
             'password' => Hash::make('password'),
             'remember_token' => Str::random(10),
@@ -47,28 +58,8 @@ class UserSeeder extends Seeder
         ]);
 
         DB::table('users')->insert([
-            'name' => 'Muhammad',
-            'email' => 'muhammad@example.com',
-            'email_verified_at' => now(),
-            'password' => Hash::make('password'),
-            'remember_token' => Str::random(10),
-            'created_at' => now(),
-            'updated_at' => now(),
-        ]);
-
-        DB::table('users')->insert([
-            'name' => 'Sarah',
-            'email' => 'sarah@example.com',
-            'email_verified_at' => now(),
-            'password' => Hash::make('password'),
-            'remember_token' => Str::random(10),
-            'created_at' => now(),
-            'updated_at' => now(),
-        ]);
-
-        DB::table('users')->insert([
-            'name' => 'John',
-            'email' => 'john@example.com',
+            'name' => 'Finance Employee',
+            'email' => 'finance_employee@example.com',
             'email_verified_at' => now(),
             'password' => Hash::make('password'),
             'remember_token' => Str::random(10),

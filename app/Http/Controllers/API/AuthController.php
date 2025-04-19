@@ -3,28 +3,25 @@
 namespace App\Http\Controllers\API;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\LoginRequest;
+use App\Http\Requests\RegisterRequest;
 use App\Http\Resources\UserResource;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
-use Illuminate\Validation\ValidationException;
 
 class AuthController extends Controller
 {
-    public function register(Request $request)
+    public function register(RegisterRequest $request)
     {
         try {
-            $request->validate([
-                'name' => 'required|string|max:255',
-                'email' => 'required|string|email|max:255|unique:users',
-                'password' => 'required|string|min:8|confirmed',
-            ]);
+            $data = $request->validated();           
 
             $user = User::create([
-                'name' => $request->name,
-                'email' => $request->email,
-                'password' => Hash::make($request->password),
+                'name' => $data['name'],
+                'email' => $data['email'],
+                'password' => Hash::make($data['password']),
             ]);
 
             $token = $user->createToken('auth_token')->plainTextToken;
@@ -34,26 +31,27 @@ class AuthController extends Controller
                 'access_token' => $token,
                 'token_type' => 'Bearer',
             ], 'User registered successfully');
-        } catch (ValidationException $e) {
-            return $this->error('Validation failed', $e->errors(), 422);
+
         } catch (\Exception $e) {
-            return $this->error('Registration failed: ' . $e->getMessage());
+            return $this->error($e->getMessage(), null, 401);
         }
     }
 
-    public function login(Request $request)
+    public function login(LoginRequest $request)
     {
         try {
-            $request->validate([
-                'email' => 'required|email',
-                'password' => 'required',
-            ]);
+            $data = $request->validated();
 
-            if (!Auth::attempt($request->only('email', 'password'))) {
+            $credentials = [
+                'email' => $data['email'],
+                'password' => $data['password'],
+            ];
+
+            if (!Auth::attempt($credentials)) {
                 return $this->error('Invalid credentials', null, 401);
             }
-
-            $user = User::where('email', $request->email)->firstOrFail();
+            
+            $user = User::where('email', $data['email'])->firstOrFail();
             $token = $user->createToken('auth_token')->plainTextToken;
 
             return $this->success([
@@ -61,8 +59,9 @@ class AuthController extends Controller
                 'access_token' => $token,
                 'token_type' => 'Bearer',
             ], 'Login successful');
+
         } catch (\Exception $e) {
-            return $this->error('Login failed', null, 401);
+            return $this->error($e->getMessage(), null, 401);
         }
     }
 

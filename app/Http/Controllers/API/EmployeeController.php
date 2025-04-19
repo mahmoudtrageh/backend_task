@@ -9,12 +9,6 @@ use App\Models\User;
 
 class EmployeeController extends Controller
 {
-     /**
-     * Get employees filtered by department
-     *
-     * @param  \App\Http\Requests\EmployeeFilterRequest  $request
-     * @return \Illuminate\Http\Response
-     */
     public function index(EmployeeFilterRequest $request)
     {
         $validated = $request->validated();
