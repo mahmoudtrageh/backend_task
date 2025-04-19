@@ -61,45 +61,45 @@ to recieve notification message
     Authentication
     Register
 
-    URL: /api/register
-    Method: POST
-    Headers:
+    - URL: /api/register
+        Method: POST
+        Headers:
 
     Accept: application/json
 
 
     Body Parameters:
 
-    name: User's name (text)
-    email: User's email (text)
-    password: User password (text)
-    password_confirmation: Password confirmation (text)
+    - name: User's name (text)
+    - email: User's email (text)
+    - password: User password (text)
+    - password_confirmation: Password confirmation (text)
 
 
     Description: Creates a new user account
 
     Login
 
-    URL: /api/login
-    Method: POST
-    Headers:
+    - URL: /api/login
+        Method: POST
+        Headers:
 
     Accept: application/json
 
 
     Body Parameters:
 
-    email: User's email (text)
-    password: User password (text)
+    - email: User's email (text)
+    - password: User password (text)
 
 
     Description: Authenticates a user and returns an access token
 
     Get Current User
 
-    URL: /api/user
-    Method: GET
-    Headers:
+    - URL: /api/user
+        Method: GET
+        Headers:
 
     Accept: application/json
     Authorization: Bearer {token}
@@ -110,9 +110,9 @@ to recieve notification message
     Leave Requests
     Create Leave Request
 
-    URL: /api/leave-request
-    Method: POST
-    Headers:
+    - URL: /api/leave-request
+        Method: POST
+        Headers:
 
     Accept: application/json
     Authorization: Bearer {token}
@@ -120,20 +120,20 @@ to recieve notification message
 
     Body Parameters:
 
-    leave_type_id: ID of the leave type (text)
-    department_id: ID of the department (text)
-    start_date: Start date of leave in DD-MM-YYYY format (text)
-    end_date: End date of leave in DD-MM-YYYY format (text)
-    reason: Reason for the leave request (text)
+    - leave_type_id: ID of the leave type (text)
+    - department_id: ID of the department (text)
+    - start_date: Start date of leave in DD-MM-YYYY format (text)
+    - end_date: End date of leave in DD-MM-YYYY format (text)
+    - reason: Reason for the leave request (text)
 
 
     Description: Creates a new leave request
 
     Update Leave Request Status
 
-    URL: /api/leave-requests/{id}/status
-    Method: PATCH
-    Headers:
+    - URL: /api/leave-requests/{id}/status
+        Method: PATCH
+        Headers:
 
     Accept: application/json
     Authorization: Bearer {token}
@@ -141,16 +141,16 @@ to recieve notification message
 
     Body Parameters:
 
-    status: New status of the leave request (e.g., "rejected") (text)
+    - status: New status of the leave request (e.g., "rejected") (text)
 
 
     Description: Updates the status of a specific leave request
 
     List Leave Requests
 
-    URL: /api/leave-requests
-    Method: GET
-    Headers:
+    - URL: /api/leave-requests
+        Method: GET
+        Headers:
 
     Accept: application/json
     Authorization: Bearer {token}
@@ -161,9 +161,9 @@ to recieve notification message
     Employees
     List Employees
 
-    URL: /api/employees
-    Method: GET
-    Headers:
+    - URL: /api/employees
+        Method: GET
+        Headers:
 
     Accept: application/json
     Authorization: Bearer {token}
@@ -171,7 +171,7 @@ to recieve notification message
 
     Query Parameters:
 
-    department_id: Optional filter by department ID
+    - department_id: Optional filter by department ID
 
 
     Description: Retrieves a list of employees, optionally filtered by departmen
