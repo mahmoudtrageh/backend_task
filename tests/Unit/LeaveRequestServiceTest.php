@@ -9,96 +9,136 @@ use Tests\TestCase;
 use Illuminate\Support\Facades\Mail;
 use App\Mail\LeaveRequestForApproval;
 use App\Mail\LeaveRequestRejected;
+use App\Repositories\LeaveRequestRepositoryInterface;
 use Database\Factories\DepartmentFactory;
 use Database\Factories\LeaveRequestFactory;
 use Database\Factories\LeaveTypeFactory;
 use Database\Factories\PositionFactory;
 use Database\Factories\UserFactory;
+use Mockery;
 
 class LeaveRequestServiceTest extends TestCase
 {
     use RefreshDatabase;
     
     protected $leaveRequestService;
+    protected $mockRepository;
     
     public function setUp(): void
     {
         parent::setUp();
         
-        // Create actual service instance
-        $this->leaveRequestService = new LeaveRequestService();
+        $this->mockRepository = Mockery::mock(LeaveRequestRepositoryInterface::class);
         
-        // Disable actual mail sending
+        $this->leaveRequestService = new LeaveRequestService($this->mockRepository);
+        
         Mail::fake();
     }
     
-    /**
-     * Test finding direct manager.
-     */
+    protected function tearDown(): void
+    {
+        Mockery::close();
+        parent::tearDown();
+    }
+    
+    public function test_index()
+    {
+        $request = request();
+        
+        $this->mockRepository->shouldReceive('index')
+            ->once()
+            ->with($request)
+            ->andReturn([]);
+            
+        $result = $this->leaveRequestService->index($request);
+        
+        $this->assertEquals([], $result);
+    }
+
+    public function test_create()
+    {
+        $data = [
+            'user_id' => 1,
+            'leave_type_id' => 1,
+            'department_id' => 1,
+            'start_date' => '2025-05-01',
+            'end_date' => '2025-05-05',
+            'reason' => 'Vacation',
+            'status' => 'pending',
+            'direct_manager' => 2
+        ];
+        
+        $leaveRequest = LeaveRequestFactory::new()->make($data);
+        
+        $this->mockRepository->shouldReceive('create')
+            ->once()
+            ->with($data)
+            ->andReturn($leaveRequest);
+            
+        $result = $this->leaveRequestService->create($data);
+        
+        $this->assertEquals($leaveRequest, $result);
+    }
+    
+    public function test_update()
+    {
+        $data = [
+            'status' => 'approved',
+            'manager_comment' => 'Approved'
+        ];
+        $id = 1;
+        
+        $this->mockRepository->shouldReceive('update')
+            ->once()
+            ->with($data, $id)
+            ->andReturn(1);
+            
+        $result = $this->leaveRequestService->update($data, $id);
+        
+        $this->assertEquals(1, $result);
+    }
+    
     public function test_find_direct_manager()
     {
-        // Create a department
         $department = DepartmentFactory::new()->create();
         
-        // Create a manager position
         $managerPosition = PositionFactory::new()->create(['title' => 'Manager']);
         
-        // Create a manager user
         $manager = UserFactory::new()->create(['name' => 'John Manager']);
         
-        // Associate manager with department
         $manager->userDepartmentPositions()->create([
             'department_id' => $department->id,
             'position_id' => $managerPosition->id,
             'is_manager' => true,
         ]);
         
-        // Create a regular employee
         $employee = UserFactory::new()->create();
         
-        // Find direct manager
         $foundManager = $this->leaveRequestService->findDirectManager($employee->id, $department->id);
         
-        // Assert correct manager was found
         $this->assertInstanceOf(User::class, $foundManager);
         $this->assertEquals($manager->id, $foundManager->id);
         $this->assertEquals('John Manager', $foundManager->name);
     }
-    
-    /**
-     * Test finding direct manager when no manager exists.
-     */
     public function test_find_direct_manager_none_exists()
     {
-        // Create a department with no manager
         $department = DepartmentFactory::new()->create();
         
-        // Create a regular employee
         $employee = UserFactory::new()->create();
         
-        // Find direct manager
         $foundManager = $this->leaveRequestService->findDirectManager($employee->id, $department->id);
         
-        // Assert no manager was found
         $this->assertNull($foundManager);
     }
-    
-    /**
-     * Test finding HR managers.
-     */
     public function test_find_hr_managers()
     {
-        // Create HR position
         $hrPosition = PositionFactory::new()->create(['title' => 'HR Manager']);
         
-        // Create department
         $department = DepartmentFactory::new()->create(['name' => 'Human Resources']);
         
-        // Create HR managers
         $hrManager1 = UserFactory::new()->create(['name' => 'HR Manager 1']);
         $hrManager2 = UserFactory::new()->create(['name' => 'HR Manager 2']);
         
-        // Associate with HR position
         $hrManager1->userDepartmentPositions()->create([
             'department_id' => $department->id,
             'position_id' => $hrPosition->id,
@@ -111,7 +151,6 @@ class LeaveRequestServiceTest extends TestCase
             'is_manager' => true,
         ]);
         
-        // Create regular manager (not HR)
         $regularManager = UserFactory::new()->create();
         $regularPosition = PositionFactory::new()->create(['title' => 'Department Manager']);
         
@@ -121,52 +160,34 @@ class LeaveRequestServiceTest extends TestCase
             'is_manager' => true,
         ]);
         
-        // Find HR managers
         $hrManagers = $this->leaveRequestService->findHrManagers();
         
-        // Assert correct managers found
         $this->assertCount(2, $hrManagers);
         $this->assertTrue($hrManagers->contains('id', $hrManager1->id));
         $this->assertTrue($hrManagers->contains('id', $hrManager2->id));
         $this->assertFalse($hrManagers->contains('id', $regularManager->id));
     }
-    
-    /**
-     * Test notifying manager of leave request.
-     */
     public function test_notify_manager()
     {
-        // Create manager
-        $manager = UserFactory::new()->create(['email' => 'wonic89166@naobk.com']);
+        $manager = UserFactory::new()->create(['email' => 'manager@example.com']);
         
-        // Create leave request
         $leaveRequest = $this->createLeaveRequest();
         
-        // Notify manager
         $this->leaveRequestService->notifyManager($leaveRequest, $manager);
         
-        // Assert email was sent
         Mail::assertSent(LeaveRequestForApproval::class, function ($mail) use ($manager) {
             return $mail->hasTo($manager->email);
         });
     }
-    
-    /**
-     * Test notifying HR managers.
-     */
     public function test_notify_hr_managers()
     {
-        // Create HR position
         $hrPosition = PositionFactory::new()->create(['title' => 'HR Manager']);
         
-        // Create department
         $department = DepartmentFactory::new()->create(['name' => 'Human Resources']);
         
-        // Create HR managers
         $hrManager1 = UserFactory::new()->create(['email' => 'hr1@example.com']);
         $hrManager2 = UserFactory::new()->create(['email' => 'hr2@example.com']);
         
-        // Associate with HR position
         $hrManager1->userDepartmentPositions()->create([
             'department_id' => $department->id,
             'position_id' => $hrPosition->id,
@@ -179,20 +200,16 @@ class LeaveRequestServiceTest extends TestCase
             'is_manager' => true,
         ]);
         
-        // Mock findHrManagers to return our test HR managers
         $mockService = $this->partialMock(LeaveRequestService::class, function ($mock) use ($hrManager1, $hrManager2) {
             $mock->shouldReceive('findHrManagers')
                 ->once()
                 ->andReturn(collect([$hrManager1, $hrManager2]));
         });
         
-        // Create leave request
         $leaveRequest = $this->createLeaveRequest();
         
-        // Notify HR managers
         $mockService->notifyHrManagers($leaveRequest);
         
-        // Assert emails were sent to both HR managers
         Mail::assertSent(LeaveRequestForApproval::class, function ($mail) use ($hrManager1) {
             return $mail->hasTo($hrManager1->email);
         });
@@ -201,31 +218,20 @@ class LeaveRequestServiceTest extends TestCase
             return $mail->hasTo($hrManager2->email);
         });
         
-        // Assert email was sent twice (once to each HR manager)
         Mail::assertSent(LeaveRequestForApproval::class, 2);
     }
-    
-    /**
-     * Test notifying employee of rejection.
-     */
     public function test_notify_rejection()
     {
-        // Create leave request
         $leaveRequest = $this->createLeaveRequest();
+        $leaveRequest->user->email = 'employee@example.com';
         $leaveRequest->manager_comment = 'Cannot approve due to upcoming deadline';
         
-        // Notify of rejection
         $this->leaveRequestService->notifyRejection($leaveRequest);
         
-        // Assert email was sent to employee
         Mail::assertSent(LeaveRequestRejected::class, function ($mail) use ($leaveRequest) {
             return $mail->hasTo($leaveRequest->user->email);
         });
     }
-    
-    /**
-     * Helper to create a leave request.
-     */
     private function createLeaveRequest()
     {
         $user = UserFactory::new()->create();
